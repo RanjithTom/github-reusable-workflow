@@ -17,6 +17,7 @@ jobs:
   
   Test_Environment:
     uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@main
+    needs: [Dev_Environment]
     with:
       environment: test
     secrets:
@@ -24,6 +25,7 @@ jobs:
     
   Prod_Environment:
     uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@main
+    needs: [Dev_Environment, Test_Environment]
     with:
       environment: prod
     secrets:
