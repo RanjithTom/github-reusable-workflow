@@ -9,21 +9,21 @@ on:
 
 jobs:
   Dev_Environment:
-    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@master
+    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@main
     with:
       environment: dev
     secrets:
       test_secret: 'dev secret'
   
   Test_Environment:
-    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@master
+    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@main
     with:
       environment: test
     secrets:
       test_secret: 'test secret'
     
   Prod_Environment:
-    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@master
+    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@main
     with:
       environment: prod
     secrets:
