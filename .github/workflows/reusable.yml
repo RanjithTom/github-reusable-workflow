@@ -46,7 +46,7 @@ jobs:
         echo "::set-output name=jsondata::$content"
     
     - name: Setup Java
-    - uses: actions/setup-java@v2
+      uses: actions/setup-java@v2
       with:
         distribution: 'zulu' # See 'Supported distributions' for available options
         java-version: '11'
