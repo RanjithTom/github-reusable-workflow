@@ -25,12 +25,6 @@ jobs:
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v3
-
-    - name: Setup Java
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu' # See 'Supported distributions' for available options
-          java-version: '11'
       
     # Cache Release this step is for putting some details or jar files into cache and download when needed instead of doing it every time
     #- name: Cache Release
@@ -50,6 +44,12 @@ jobs:
         content="${content//$'\n'/'%0A'}"
         content="${content//$'\r'/'%0D'}"
         echo "::set-output name=jsondata::$content"
+    
+    - name: Setup Java
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '11'
 
   deploy:
     if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.event.pull_request.base.ref == 'main')
