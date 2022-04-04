@@ -76,4 +76,4 @@ jobs:
     #    path: ${{ github.workspace }}/${{ env.FUNCTIONS_DIRECTORY }}/output
     #    key: release-${{ github.sha }}
     - name: 'Deploy Application'
-      run: java ${{ github.workspace }}/function/SampleFunction.java '${{ matrix.customer_name }} in environment -${{ inputs.environment }}'
+      run: java ./SampleFunction.java '${{ matrix.customer_name }} in environment ${{ inputs.environment }}'
