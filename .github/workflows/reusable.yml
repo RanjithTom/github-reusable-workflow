@@ -1,0 +1,75 @@
+name: Azure DigiBarnevern functions
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to Deploy'
+        required: true
+        type: string
+    secrets:
+      test_secret:
+        description: 'Sometime when respository secrets need to pass in those scenarios need to pass secrets from caller workflow'
+        required: false
+
+env:
+  FUNCTIONS_DIRECTORY: function # If function code is in root directory keep this as empty ''
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.FUNCTIONS_DIRECTORY }}
+    outputs:
+      customer_data: ${{ steps.set-matrix.outputs.jsondata }}
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '11'
+      
+    # Cache Release this step is for putting some details or jar files into cache and download when needed instead of doing it every time
+    #- name: Cache Release
+    #  if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || github.event.pull_request.base.ref == 'master')
+    #  id: cache-release
+    #  uses: actions/cache@v3
+    #  with:
+    #    path: ${{ github.workspace }}/${{ env.FUNCTIONS_DIRECTORY }}/output
+    #    key: release-${{ github.sha }}
+    - name: Generate Customer Matrix
+      if:  github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || github.event.pull_request.base.ref == 'master')
+      id: set-matrix
+      run: |
+        content=$(cat ${{ github.workspace }}/.github/workflows/customers/${{ inputs.environment }}-customers.json)
+        #It needed as single json line string
+        content="${content//'%'/'%25'}"
+        content="${content//$'\n'/'%0A'}"
+        content="${content//$'\r'/'%0D'}"
+        echo "::set-output name=jsondata::$content"
+
+  deploy:
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || github.event.pull_request.base.ref == 'master')
+
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    strategy:
+      matrix: ${{fromJson(needs.build.outputs.customer_data)}}
+    
+    #Need to create dev, test and prod environment secrets based on each subscription, currently we were using same subscription in general
+    environment: ${{ inputs.environment }}
+          
+    # These steps will run one per customer in the matrix on line 14
+    steps:
+    #- name: Cache Download
+    #  id: cache-release
+    #  uses: actions/cache@v3
+    #  with:
+    #    path: ${{ github.workspace }}/${{ env.FUNCTIONS_DIRECTORY }}/output
+    #    key: release-${{ github.sha }}
+    - name: 'Deploy Application'
+      run: java SampleFunction.java '${{ matrix.customer_name }} in environment -${{ inputs.environment }}'

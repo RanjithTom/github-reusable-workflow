@@ -1,0 +1,10 @@
+{
+    "include": [
+        {
+            "customer_name": "test-customer-a"
+        },
+        {
+            "customer_name": "test-customer-b"
+        }
+    ]
+}

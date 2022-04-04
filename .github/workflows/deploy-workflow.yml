@@ -1,0 +1,30 @@
+name: Deploy-Pipeline
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  Dev_Environment:
+    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@master
+    with:
+      environment: dev
+    secrets:
+      test_secret: 'dev secret'
+  
+  Test_Environment:
+    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@master
+    with:
+      environment: test
+    secrets:
+      test_secret: 'test secret'
+    
+  Prod_Environment:
+    uses: RanjithTom/github-reusable-workflow/.github/workflows/reusable.yml@master
+    with:
+      environment: prod
+    secrets:
+      test_secret: 'prod secret'
